@@ -1,0 +1,42 @@
+{
+  "name": "fastfood-app",
+  "version": "1.0.0",
+  "description": "This app allows customers of a take-away restaurant to place orders and and wait for them to be prepared and delivered to a pickup counter. After placing the order the customer waits on the order to be announced before picking it up and proceeding to the dining area.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --exec babel-node server/index.js",
+    "dev": "nodemon --exec babel-node server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AbdRaqeeb/fastfood-app.git"
+  },
+  "keywords": [
+    "order",
+    "server",
+    "menu",
+    "order",
+    "taker"
+  ],
+  "author": "Ajao AbdRaqeeb",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AbdRaqeeb/fastfood-app/issues"
+  },
+  "homepage": "https://github.com/AbdRaqeeb/fastfood-app#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.23.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.10.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.11.6",
+    "@babel/node": "^7.10.5",
+    "@babel/preset-env": "^7.11.5",
+    "nodemon": "^2.0.4"
+  }
+}
