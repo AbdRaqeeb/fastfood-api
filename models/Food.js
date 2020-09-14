@@ -5,7 +5,7 @@ const FoodSchema = mongoose.Schema({
         type: String,
         required: true
     },
-    cost: {
+    unit_cost: {
         type: Number,
         number: true
     },
@@ -16,6 +16,17 @@ const FoodSchema = mongoose.Schema({
     unit: {
         type: String,
         required: true
+    },
+    images: [
+        {
+            type: String,
+            required: true
+        }
+    ],
+    rating: {
+        type: Number,
+        max: 5,
+        default: 0
     }
 });
 
