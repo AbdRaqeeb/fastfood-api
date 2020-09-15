@@ -7,7 +7,7 @@ export function validateUser(user, key) {
         password: key ? Joi.string().optional() : Joi.string().required(),
         phone: Joi.string().optional().allow(''),
         role: Joi.string().optional().allow(''),
-        image: Joi.string().optional().allow(''),
+        image: Joi.any().optional().allow(''),
         isActive: Joi.string().optional()
     });
     return schema.validate(user);
@@ -39,4 +39,12 @@ export function validateOrder(order) {
         rating: Joi.string().optional().allow('')
     });
     return schema.validate(order);
-}
+};
+
+export function validateLogin(user) {
+    const schema = Joi.object({
+        email: Joi.string().required().max(200),
+        password: Joi.string().required().min(6)
+    });
+    return schema.validate(user);
+};
