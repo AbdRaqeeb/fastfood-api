@@ -46,6 +46,10 @@ const OrderSchema = mongoose.Schema({
     cook: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    },
+    phone: {
+        type: String,
+        required: true
     }
 });
 

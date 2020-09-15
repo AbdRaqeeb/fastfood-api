@@ -12,6 +12,7 @@ import UserRoutes from './modules/users/routes/UserRoutes';
 import AuthRoutes from './modules/auth/routes/AuthRoutes';
 import CategoryRoutes from './modules/category/routes/CategoryRoutes';
 import FoodRoutes from './modules/food/routes/FoodRoutes';
+import OrderRoutes from './modules/order/routes/OrderRoutes';
 
 const app = express();
 
@@ -36,6 +37,7 @@ app.use('/users', UserRoutes);
 app.use('/auth', AuthRoutes);
 app.use('/category', CategoryRoutes);
 app.use('/food', FoodRoutes);
+app.use('/order', OrderRoutes);
 
 const PORT = process.env.PORT || 6000;
 

@@ -27,16 +27,15 @@ export function validateFood(food, key) {
 
 export function validateOrder(order) {
     const schema = Joi.object({
-        name: Joi.string().required(),
-        reference: Joi.number().required(),
         amount: Joi.number().required(),
         payment: Joi.string().required(),
-        status: Joi.string().required(),
-        delivery: Joi.string().required(),
+        status: Joi.string().optional(),
+        delivery: Joi.string().optional(),
         address: Joi.string().optional().max(200),
-        owner: Joi.string().required(),
         cook: Joi.string().optional(),
-        rating: Joi.string().optional().allow('')
+        rating: Joi.string().optional().allow(''),
+        phone: Joi.string().required(),
+        data: Joi.array().required()
     });
     return schema.validate(order);
 };
