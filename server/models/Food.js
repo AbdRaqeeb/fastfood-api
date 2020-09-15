@@ -35,6 +35,9 @@ const FoodSchema = mongoose.Schema({
     }
 });
 
+FoodSchema.index({
+    name: 'text'
+});
 const Food = mongoose.model('Food', FoodSchema);
 
 export default Food;

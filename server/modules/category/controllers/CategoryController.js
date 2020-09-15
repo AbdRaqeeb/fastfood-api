@@ -41,6 +41,8 @@ class CategoryController {
                 image
             });
 
+            await category.save();
+
             return res.status(201).json({
                 msg: 'Category created successfully',
                 category

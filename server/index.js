@@ -11,6 +11,7 @@ import connectDB from "./config/db";
 import UserRoutes from './modules/users/routes/UserRoutes';
 import AuthRoutes from './modules/auth/routes/AuthRoutes';
 import CategoryRoutes from './modules/category/routes/CategoryRoutes';
+import FoodRoutes from './modules/food/routes/FoodRoutes';
 
 const app = express();
 
@@ -34,6 +35,7 @@ Cloudinary();
 app.use('/users', UserRoutes);
 app.use('/auth', AuthRoutes);
 app.use('/category', CategoryRoutes);
+app.use('/food', FoodRoutes);
 
 const PORT = process.env.PORT || 6000;
 

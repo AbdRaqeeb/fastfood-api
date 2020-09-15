@@ -19,7 +19,7 @@ export function validateFood(food, key) {
         unit_cost: key ? Joi.number().optional() : Joi.number().required(),
         cooking_duration: key ? Joi.number().optional() : Joi.number().required(),
         unit: key ? Joi.string().optional() : Joi.string().required(),
-        images: Joi.any().allow(),
+        images: Joi.any().allow().optional(),
         rating: Joi.number().optional().allow('')
     });
     return schema.validate(food);
