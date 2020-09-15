@@ -48,3 +48,12 @@ export function validateLogin(user) {
     });
     return schema.validate(user);
 };
+
+export function validateCategory(category, key) {
+    const schema = Joi.object({
+        name: key ? Joi.string().optional().max(100) : Joi.string().required().max(100),
+        description: Joi.string().optional().max(200),
+        image: Joi.any().optional()
+    });
+    return schema.validate(category);
+}
