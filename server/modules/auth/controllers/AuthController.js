@@ -11,6 +11,26 @@ import {generateToken} from '../../../middlewares/token';
 class AuthController {
     /**
      * @static
+     * @desc    Get Logged in user
+     * @param {object} req express request object
+     * @param {object} res express response object
+     * @returns {object} user profile
+     * @access Private
+     * */
+    static async loggedUser(req, res) {
+        try {
+            const user = await User.findById(req.user.id).select('-password');
+
+            res.status(200).json(user);
+        } catch (e) {
+            console.error(e.message);
+            res.status(500).send('Internal server error')
+        }
+    }
+
+
+    /**
+     * @static
      * @desc    Login customer
      * @param {object} req express request object
      * @param {object} res express response object
