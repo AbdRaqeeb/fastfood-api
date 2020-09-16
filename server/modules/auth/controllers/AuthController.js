@@ -199,7 +199,7 @@ class AuthController {
             msg: 'Please upload an image'
         });
 
-        const image = uploadImage(req.files.image);
+        const image = await uploadImage(req.files.image, 1);
 
         try {
             const user = await User.findByIdAndUpdate(req.user.id, {

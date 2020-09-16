@@ -19,7 +19,7 @@ export function validateFood(food, key) {
         unit_cost: key ? Joi.number().optional() : Joi.number().required(),
         cooking_duration: key ? Joi.number().optional() : Joi.number().required(),
         unit: key ? Joi.string().optional() : Joi.string().required(),
-        images: Joi.any().allow(),
+        images: Joi.any().allow().optional(),
         rating: Joi.number().optional().allow('')
     });
     return schema.validate(food);
@@ -27,16 +27,15 @@ export function validateFood(food, key) {
 
 export function validateOrder(order) {
     const schema = Joi.object({
-        name: Joi.string().required(),
-        reference: Joi.number().required(),
         amount: Joi.number().required(),
         payment: Joi.string().required(),
-        status: Joi.string().required(),
-        delivery: Joi.string().required(),
+        status: Joi.string().optional(),
+        delivery: Joi.string().optional(),
         address: Joi.string().optional().max(200),
-        owner: Joi.string().required(),
         cook: Joi.string().optional(),
-        rating: Joi.string().optional().allow('')
+        rating: Joi.string().optional().allow(''),
+        phone: Joi.string().required(),
+        data: Joi.array().required()
     });
     return schema.validate(order);
 };
@@ -48,3 +47,12 @@ export function validateLogin(user) {
     });
     return schema.validate(user);
 };
+
+export function validateCategory(category, key) {
+    const schema = Joi.object({
+        name: key ? Joi.string().optional().max(100) : Joi.string().required().max(100),
+        description: Joi.string().optional().max(200),
+        image: Joi.any().optional()
+    });
+    return schema.validate(category);
+}
