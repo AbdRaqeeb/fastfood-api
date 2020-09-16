@@ -5,7 +5,7 @@ import fileUpload from 'express-fileupload';
 
 //config files
 import Cloudinary from "./config/cloudinary";
-import connectDB from "./config/db";
+import Models from "./database/models";
 
 //import routes
 import UserRoutes from './modules/users/routes/UserRoutes';
@@ -25,8 +25,9 @@ app.use(fileUpload({
 
 
 // Connect to database
-// noinspection JSIgnoredPromiseFromCall
-connectDB();
+Models.sequelize.sync()
+    .then(() => console.log('Database synced'))
+    .catch(err => console.log('Unable to sync database', err));
 
 // Connect tp cloudinary API
 // noinspection JSIgnoredPromiseFromCall
