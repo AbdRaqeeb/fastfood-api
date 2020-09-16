@@ -6,7 +6,7 @@ import folders from '../helpers/folders';
  *@desc upload photo to Cloudinary
  **/
 
-export async function uploadImage(image, key) {
+export async function uploadImage(image, folder) {
     try {
         let imageFile = image;
 
@@ -16,12 +16,10 @@ export async function uploadImage(image, key) {
         //move image to the photo directory
         await imageFile.mv(filePath);
 
-        // conditionals to know folder name t
-        const folder_name = (key === 1) ? folders.users : (key === 2) ? folders.category : folders.foods;
 
         //upload image
         const result = await cloudinary.uploader.upload(filePath, {
-            folder: folder_name
+            folder: folder
         });
 
         // Delete image on server after upload

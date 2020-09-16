@@ -1,8 +1,7 @@
-import Order from "../../../models/Order";
-import OrderDetail from "../../../models/OrderDetail";
+import {Order, OrderDetail, User, Cook} from '../../../database/models';
 import {validateOrder} from '../../../middlewares/validate';
-import {runInTransaction} from 'mongoose-transact-utils';
 import {generateReference} from '../../../middlewares/referenceGenerator';
+import db from '../../../database/models/index';
 
 /**
  *@class Order Controller
@@ -25,7 +24,7 @@ class OrderController {
         const orderDetails = data.data;
 
         try {
-            const result = await runInTransaction(async session => {
+            const result = await db.sequelize.transaction(async t => {
                 const order = await Order.create({
                     name: req.user.name,
                     reference: generateReference(6),
@@ -34,15 +33,16 @@ class OrderController {
                     address: data.address,
                     delivery: data.delivery,
                     owner: req.user.id,
-                    phone: data.phone
-                }).session(session);
+                    phone: data.phone,
+                    comments: data.comments
+                }, {transaction: t});
 
                 const newOrderDetail = await orderDetails.map(detail => ({
                     ...detail,
-                    order: order._id
+                    order_id: order.order_id
                 }));
 
-                await OrderDetail.create(newOrderDetail).session(session);
+                await OrderDetail.bulkCreate(newOrderDetail, {transaction: t, validate: true});
 
                 return order;
             });
@@ -68,7 +68,18 @@ class OrderController {
      */
     static async getOrders(req, res) {
         try {
-            const orders = await Order.find({}).populate('User', 'name -_id');
+            const orders = await Order.findAll({
+                include: [
+                    {
+                        model: User,
+                        required: true
+                    },
+                    {
+                        model: Cook,
+                        required: true
+                    }
+                ]
+            });
 
             if (orders.length < 1) return res.status(404).json({
                 msg: 'No orders available'
@@ -93,7 +104,9 @@ class OrderController {
      */
     static async getOrder(req, res) {
         try {
-            const order = await Order.findById(req.params.id).populate('User', 'name -_id');
+            const order = await Order.findByPk(req.params.id, {
+                include: OrderDetail
+            });
 
             if (!order) return res.status(404).json({
                 msg: 'Order not found'
@@ -123,9 +136,11 @@ class OrderController {
      */
     static async getCustomerOrders(req, res) {
         try {
-            const orders = await Order.find({
-                owner: req.user.id,
-            }).populate('User', 'name -_id');
+            const orders = await Order.findAll({
+                where: {
+                    user_id: req.user.id
+                }
+            });
 
             if (orders.length < 1) return res.status(404).json({
                 msg: 'No orders available'
@@ -149,9 +164,9 @@ class OrderController {
      * @access Private
      */
     static async updateOrder(req, res) {
-        const {rating, status, cook} = req.body;
+        const {status, cook} = req.body;
         try {
-            let order = await Order.findById(req.params.id);
+            let order = await Order.findByPk(req.params.id);
 
             if (!order) return res.status(404).json({
                 msg: 'Order not found'
@@ -162,11 +177,20 @@ class OrderController {
             if (status) orderFields.status = status;
             if (cook) orderFields.cook = cook;
 
-            await Order.findByIdAndUpdate(req.params.id, {
-                $set: orderFields
-            });
+            await order.update(orderFields);
 
-            order = await Order.findById(req.params.id).populate('User', 'name -_id');
+            order = await Order.findByPk(req.params.id, {
+                include: [
+                    {
+                        model: User,
+                        required: true
+                    },
+                    {
+                        model: Cook,
+                        required: true
+                    }
+                ]
+            });
 
             return res.status(200).json({
                 msg: 'Order updated successfully',
@@ -189,13 +213,13 @@ class OrderController {
     static async rateOrder(req, res) {
         const {rating} = req.body;
         try {
-            let order = await Order.findById(req.params.id);
+            let order = await Order.findByPk(req.params.id);
 
             if (!order) return res.status(404).json({
                 msg: 'Order not found'
             });
 
-            if (req.user.id !== order.owner) return ress.status(403).json({
+            if (req.user.id !== order.user_id) return res.status(403).json({
                 msg: 'Unauthorized resource'
             });
 
@@ -203,11 +227,11 @@ class OrderController {
             const orderFields = {};
             if (rating) orderFields.rating = rating;
 
-            await Order.findByIdAndUpdate(req.params.id, {
-                $set: orderFields
-            });
+            await order.update(orderFields);
 
-            order = await Order.findById(req.params.id).populate('User', 'name -_id');
+            order = await Order.findByPk(req.params.id, {
+                include: User
+            });
 
             return res.status(200).json({
                 msg: 'Order updated successfully',
@@ -229,13 +253,13 @@ class OrderController {
      */
     static async deleteOrder(req, res) {
         try {
-            const order = await Order.findById(req.params.id);
+            const order = await Order.findByPk(req.params.id);
 
             if (!order) return res.status(404).json({
                 msg: 'Order not found'
             });
 
-            await Order.findByIdAndRemove(req.params.id);
+            await order.destroy({force: true});
 
             return res.status(200).json({
                 msg: 'Order deleted successfully'

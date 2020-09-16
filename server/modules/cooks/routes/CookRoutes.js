@@ -1,11 +1,11 @@
 import {Router} from 'express';
+import CookController from "../controllers/CookController";
 import verify from "../../../middlewares/verify";
-import UserController from "../controllers/UserController";
 
 const router = Router();
-const {registerCustomer, changePassword, updateProfile, uploadProfilePhoto} = UserController;
+const {registerCook, changePassword, updateProfile, uploadProfilePhoto} = CookController;
 
-router.post('/', registerCustomer);
+router.post('/', registerCook);
 router.put('/upload', verify, uploadProfilePhoto);
 router.put('/password', verify, changePassword);
 router.put('/', verify, updateProfile);

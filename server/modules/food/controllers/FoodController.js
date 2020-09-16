@@ -1,9 +1,12 @@
-import Food from "../../../models/Food";
+import {Food, Category} from '../../../database/models';
 import {validateFood} from '../../../middlewares/validate';
 import {uploadImages} from '../../../middlewares/upload';
+import db from '../../../database/models/index';
+
+const {Op} = db.Sequelize;
 
 /**
- * @class Food Controller
+ * @class FoodController
  * @classdesc Controllers for food modules
  */
 class FoodController {
@@ -19,10 +22,16 @@ class FoodController {
         const {error} = validateFood(req.body);
         if (error) return res.status(400).json(error.details[0].message);
 
-        const {name, unit_cost, cooking_duration, unit, category} = req.body;
+        const {name, unit_cost, cooking_duration, unit, category_id} = req.body;
 
         try {
-            let food = await Food.findOne({name, category});
+            let food = await Food.findOne({
+                where:
+                    {
+                        name,
+                        category
+                    }
+            });
 
             if (food) return res.status(400).json({
                 msg: 'Food already exists'
@@ -34,12 +43,12 @@ class FoodController {
 
             const images = await uploadImages(req.files);
 
-            food = new Food({
+            food = Food.build({
                 name,
                 unit_cost,
                 cooking_duration,
                 unit,
-                category,
+                category_id,
                 images
             });
 
@@ -51,7 +60,7 @@ class FoodController {
             });
         } catch (e) {
             console.error(e.message);
-            res.status(500).send('Internal server error...')
+            res.status(500).send('Internal server error...');
         }
     }
 
@@ -65,11 +74,9 @@ class FoodController {
      */
     static async getFoods(req, res) {
         try {
-            const foods = await Food.find({}, {
-                sort: {
-                    name: 1
-                }
-            }).populate('Category', 'name -_id');
+            const foods = await Food.findAll({
+                include: Category
+            });
 
             if (foods.length < 1) return res.status(404).json({
                 msg: 'No food available'
@@ -95,13 +102,12 @@ class FoodController {
      */
     static async getFoodInCategory(req, res) {
         try {
-            const foods = await Food.find({
-                category: req.params.id
-            }, {
-                sort: {
-                    name: 1
-                }
-            }).populate('Category', 'name, -_id');
+            const foods = await Food.findAll({
+                where: {
+                    category_id: req.params.id
+                },
+                include: Category
+            });
 
             if (foods.length < 1) return res.status(404).json({
                 msg: 'Food not available in this category'
@@ -126,8 +132,9 @@ class FoodController {
      */
     static async getFood(req, res) {
         try {
-            const food = await Food.findById(req.params.id)
-                .populate('Category', 'name -_id');
+            const food = await Food.findByPk(req.params.id, {
+                include: Category
+            });
 
             if (!food) return res.status(404).json({
                 msg: 'Food not found'
@@ -153,11 +160,11 @@ class FoodController {
     static async searchFood(req, res) {
         const name = req.query.name;
         try {
-            const foods = await Food.find({
-                $text: {
-                    $search: name
+            const foods = await Food.findAll({
+                where: {
+                    [Op.iLike]: `%${name}`
                 }
-            }).sort('name').populate('Category', 'name -_id');
+            });
 
             if (foods.length < 1) return res.status(404).json({
                 msg: 'No query match'
@@ -187,7 +194,7 @@ class FoodController {
         const {name, unit_cost, cooking_duration, unit, category, rating} = req.body;
 
         try {
-            let food = await Food.findById(req.params.id);
+            let food = await Food.findByPk(req.params.id);
 
             if (!food) return res.status(404).json({
                 msg: 'Food not found'
@@ -204,13 +211,11 @@ class FoodController {
             if (rating) foodFields.rating = rating;
             foodFields.images = images;
 
-            await Food.findByIdAndUpdate(req.params.id, {
-                    $set: foodFields
-                }
-            );
+            await food.update(foodFields);
 
-            food = await Food.findById(req.params.id)
-                .populate('Category', 'name -_id');
+            food = await Food.findByPk(req.params.id, {
+                include: Category
+            });
 
             return res.status(200).json({
                 food
@@ -232,13 +237,13 @@ class FoodController {
      */
     static async deleteFood(req, res) {
         try {
-            const food = await Food.findById(req.params.id);
+            const food = await Food.findByPk(req.params.id);
 
             if (!food) return res.status(404).json({
                 msg: 'Food not found'
             });
 
-            await Food.findByIdAndRemove(req.params.id);
+            await food.destroy({force: true});
 
             return res.status(200).json({
                 msg: 'Food deleted successfully'

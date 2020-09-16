@@ -1,9 +1,10 @@
-import Category from "../../../models/Category";
+import {Category, Food} from '../../../database/models';
 import {validateCategory} from '../../../middlewares/validate';
 import {uploadImage} from '../../../middlewares/upload';
+import folders from "../../../helpers/folders";
 
 /**
- * @class Category Controller
+ * @class CategoryController
  * @classdesc Controllers for food category
  * */
 
@@ -23,7 +24,11 @@ class CategoryController {
         const {name, description} = req.body;
 
         try {
-            let category = await Category.findOne({name});
+            let category = await Category.findOne({
+                where: {
+                    name
+                }
+            });
 
             if (category) return res.status(400).json({
                 msg: 'Category already exists'
@@ -33,9 +38,9 @@ class CategoryController {
                 msg: 'Please upload an image'
             });
 
-            const image = await uploadImage(req.files.image, 2);
+            const image = await uploadImage(req.files.image, folders.category);
 
-            category = new Category({
+            category = Category.build({
                 name,
                 description,
                 image
@@ -63,7 +68,9 @@ class CategoryController {
      */
     static async getCategories(req, res) {
         try {
-            const categories = await Category.find({});
+            const categories = await Category.findAll({
+                include: Food
+            });
 
             if (categories.length < 1) return res.status(404).json({
                 msg: 'No categories available'
@@ -88,7 +95,9 @@ class CategoryController {
      */
     static async getCategory(req, res) {
         try {
-            const category = await Category.findById(req.params.id);
+            const category = await Category.findByPk(req.params.id, {
+                include: Food
+            });
 
             if (!category) return res.status(404).json({
                 msg: 'Category not found'
@@ -118,7 +127,7 @@ class CategoryController {
         const {name, description} = req.body;
 
         try {
-            let category = await Category.findById(req.params.id);
+            let category = await Category.findByPk(req.params.id);
 
             if (!category) return res.status(404).json({
                 msg: 'Category not found'
@@ -132,12 +141,11 @@ class CategoryController {
             if (description) categoryField.description = description;
             categoryField.image = image;
 
-            category = await Category.findByIdAndUpdate(req.params.id, {
-                    $set: categoryField
-                },
-                {
-                    new: true
-                });
+            await category.update(categoryField);
+
+            category = await Category.findByPk(req.params.id, {
+                include: Food
+            });
 
             return res.status(200).json({
                 msg: 'Category updated successfully',
@@ -159,13 +167,13 @@ class CategoryController {
      */
     static async deleteCategory(req, res) {
         try {
-            const category = await Category.findById(req.params.id);
+            const category = await Category.findByPk(req.params.id);
 
             if (!category) return res.status(404).json({
                 msg: 'Category not found'
             });
 
-            await Category.findByIdAndRemove(req.params.id);
+            await category.destroy({force: true});
 
             return res.status(200).json({
                 msg: 'Category deleted successfully'
