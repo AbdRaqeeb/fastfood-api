@@ -9,6 +9,8 @@ import Models from "./database/models";
 
 //import routes
 import UserRoutes from './modules/users/routes/UserRoutes';
+import CookRoutes from './modules/cooks/routes/CookRoutes';
+import AdminRoutes from './modules/admin/routes/AdminRoutes';
 import AuthRoutes from './modules/auth/routes/AuthRoutes';
 import CategoryRoutes from './modules/category/routes/CategoryRoutes';
 import FoodRoutes from './modules/food/routes/FoodRoutes';
@@ -17,7 +19,7 @@ import OrderRoutes from './modules/order/routes/OrderRoutes';
 const app = express();
 
 // Initiate middlewares
-app.use(express.json({ extended: false }));
+app.use(express.json({extended: false}));
 app.use(cors());
 app.use(fileUpload({
     limits:{ fileSize: 10 * 1024 * 1024 }
@@ -34,11 +36,13 @@ Models.sequelize.sync()
 Cloudinary();
 
 // routes
-app.use('/users', UserRoutes);
-app.use('/auth', AuthRoutes);
-app.use('/category', CategoryRoutes);
-app.use('/food', FoodRoutes);
-app.use('/order', OrderRoutes);
+app.use('api/v1/users', UserRoutes);
+app.use('api/v1/cooks', CookRoutes);
+app.use('api/v1/admin', AdminRoutes);
+app.use('api/v1/auth', AuthRoutes);
+app.use('api/v1/category', CategoryRoutes);
+app.use('api/v1/food', FoodRoutes);
+app.use('api/v1/order', OrderRoutes);
 
 const PORT = process.env.PORT || 6000;
 

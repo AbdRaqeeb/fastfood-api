@@ -11,19 +11,20 @@ export function validateUser(user, key) {
         isActive: Joi.string().optional()
     });
     return schema.validate(user);
-};
+}
 
 export function validateFood(food, key) {
     const schema = Joi.object({
         name: key ? Joi.string().optional().max(200) : Joi.string().required().max(200),
         unit_cost: key ? Joi.number().optional() : Joi.number().required(),
         cooking_duration: key ? Joi.number().optional() : Joi.number().required(),
+        category_id: key ? Joi.number().optional() : Joi.number().required(),
         unit: key ? Joi.string().optional() : Joi.string().required(),
         images: Joi.any().allow().optional(),
         rating: Joi.number().optional().allow('')
     });
     return schema.validate(food);
-};
+}
 
 export function validateOrder(order) {
     const schema = Joi.object({
@@ -35,10 +36,11 @@ export function validateOrder(order) {
         cook: Joi.string().optional(),
         rating: Joi.string().optional().allow(''),
         phone: Joi.string().required(),
-        data: Joi.array().required()
+        data: Joi.array().items(Joi.object()).required(),
+        comments: Joi.string().optional().allow('')
     });
     return schema.validate(order);
-};
+}
 
 export function validateLogin(user) {
     const schema = Joi.object({
@@ -46,7 +48,7 @@ export function validateLogin(user) {
         password: Joi.string().required().min(6)
     });
     return schema.validate(user);
-};
+}
 
 export function validateCategory(category, key) {
     const schema = Joi.object({
@@ -55,4 +57,12 @@ export function validateCategory(category, key) {
         image: Joi.any().optional()
     });
     return schema.validate(category);
+}
+
+export function validatePassword(password) {
+    const schema = Joi.object({
+        old_password: Joi.string().required().max(200).min(6),
+        new_password: Joi.string().required().max(200).min(6),
+    });
+    return schema.validate(password);
 }
