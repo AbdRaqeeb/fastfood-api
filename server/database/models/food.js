@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         cooking_duration: {
             type: DataTypes.INTEGER,
-            allowNull: false,
+            allowNull: true,
             defaultValue: 0
         },
         unit: {

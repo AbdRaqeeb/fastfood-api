@@ -17,7 +17,7 @@ export function validateFood(food, key) {
     const schema = Joi.object({
         name: key ? Joi.string().optional().max(200) : Joi.string().required().max(200),
         unit_cost: key ? Joi.number().optional() : Joi.number().required(),
-        cooking_duration: key ? Joi.number().optional() : Joi.number().required(),
+        cooking_duration: Joi.number().optional(),
         category_id: key ? Joi.number().optional() : Joi.number().required(),
         unit: key ? Joi.string().optional() : Joi.string().required(),
         images: Joi.any().allow().optional(),
