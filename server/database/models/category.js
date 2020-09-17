@@ -32,6 +32,10 @@ module.exports = (sequelize, DataTypes) => {
             validate: {
                 max: 300
             }
+        },
+        image: {
+            type: DataTypes.STRING,
+            allowNull: false
         }
     }, {
         sequelize,
