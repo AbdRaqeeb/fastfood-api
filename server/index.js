@@ -22,7 +22,7 @@ const app = express();
 app.use(express.json({extended: false}));
 app.use(cors());
 app.use(fileUpload({
-    limits:{ fileSize: 10 * 1024 * 1024 }
+    limits: {fileSize: 10 * 1024 * 1024}
 }));
 
 
@@ -36,13 +36,15 @@ Models.sequelize.sync()
 Cloudinary();
 
 // routes
-app.use('api/v1/users', UserRoutes);
-app.use('api/v1/cooks', CookRoutes);
-app.use('api/v1/admin', AdminRoutes);
-app.use('api/v1/auth', AuthRoutes);
-app.use('api/v1/category', CategoryRoutes);
-app.use('api/v1/food', FoodRoutes);
-app.use('api/v1/order', OrderRoutes);
+app.use('/api/v1/users', UserRoutes);
+app.use('/api/v1/cooks', CookRoutes);
+app.use('/api/v1/admin', AdminRoutes);
+app.use('/api/v1/auth', AuthRoutes);
+app.use('/api/v1/category', CategoryRoutes);
+app.use('/api/v1/food', FoodRoutes);
+app.use('/api/v1/order', OrderRoutes);
+
+app.get('/', (req, res) => res.status(200).send('Welcome to our restaurant'));
 
 const PORT = process.env.PORT || 6000;
 

@@ -4,7 +4,7 @@ export function validateUser(user, key) {
     const schema = Joi.object({
         name: key ? Joi.string().optional().max(200) : Joi.string().required().max(200),
         email: key ? Joi.string().optional() : Joi.string().email().required(),
-        password: key ? Joi.string().optional() : Joi.string().required(),
+        password: key ? Joi.string().optional().min(6) : Joi.string().required().min(6),
         phone: Joi.string().optional().allow(''),
         role: Joi.string().optional().allow(''),
         image: Joi.any().optional().allow(''),

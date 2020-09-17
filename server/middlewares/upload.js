@@ -11,7 +11,7 @@ export async function uploadImage(image, folder) {
         let imageFile = image;
 
         //image file path
-        const filePath = `./src/photos/image${Date.now()}.jpg`;
+        const filePath = `./server/photos/image${Date.now()}.jpg`;
 
         //move image to the photo directory
         await imageFile.mv(filePath);
@@ -39,7 +39,7 @@ export async function uploadImages(images) {
         let imageFiles = images;
 
         //image file path
-        const filePath = `./src/photos/image${Date.now()}.jpg`;
+        const filePath = `./server/photos/image${Date.now()}.jpg`;
 
         for (const image of imageFiles) {
             //move image to the photo directory
