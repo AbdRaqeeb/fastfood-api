@@ -49,7 +49,8 @@ class FoodController {
                 cooking_duration,
                 unit,
                 category_id,
-                images
+                images,
+                admin_id: req.user.id
             });
 
             await food.save();
