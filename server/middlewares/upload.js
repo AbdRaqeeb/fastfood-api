@@ -6,8 +6,10 @@ import folders from '../helpers/folders';
  *@desc upload photo to Cloudinary
  **/
 
-export async function uploadImage(image, folder) {
+export async function uploadImage(image, folder, key) {
+    // key is added to return single url as array for single food image upload
     try {
+        const url = [];
         let imageFile = image;
 
         //image file path
@@ -26,6 +28,11 @@ export async function uploadImage(image, folder) {
         fs.unlinkSync(filePath);
         console.log('Photo deleted');
 
+        // return single url as an array
+        if (key) {
+            url.push(result.secure_url);
+            return url
+        }
         return result.secure_url
     } catch (e) {
         console.error(e.message)

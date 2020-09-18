@@ -1,7 +1,8 @@
 import {Food, Category} from '../../../database/models';
 import {validateFood} from '../../../middlewares/validate';
-import {uploadImages} from '../../../middlewares/upload';
+import {uploadImage, uploadImages} from '../../../middlewares/upload';
 import db from '../../../database/models/index';
+import folders from "../../../helpers/folders";
 
 const {Op} = db.Sequelize;
 
@@ -41,7 +42,8 @@ class FoodController {
                 msg: 'Please upload an image'
             });
 
-            const images = await uploadImages(req.files.images);
+            // array key is added to uploadImage in order to return single url as an array
+            const images = (Object.keys(req.files).length === 1) ? await uploadImage(req.files.images, folders.foods, 'array'): await uploadImages(req.files.images);
 
             food = Food.build({
                 name,
