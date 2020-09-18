@@ -29,7 +29,7 @@ class FoodController {
                 where:
                     {
                         name,
-                        category
+                        category_id
                     }
             });
 
