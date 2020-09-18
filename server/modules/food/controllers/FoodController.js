@@ -29,7 +29,7 @@ class FoodController {
                 where:
                     {
                         name,
-                        category
+                        category_id
                     }
             });
 
@@ -41,7 +41,7 @@ class FoodController {
                 msg: 'Please upload an image'
             });
 
-            const images = await uploadImages(req.files);
+            const images = await uploadImages(req.files.images);
 
             food = Food.build({
                 name,
