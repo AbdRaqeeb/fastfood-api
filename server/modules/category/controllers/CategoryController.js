@@ -68,9 +68,7 @@ class CategoryController {
      */
     static async getCategories(req, res) {
         try {
-            const categories = await Category.findAll({
-                include: Food
-            });
+            const categories = await Category.findAll();
 
             if (categories.length < 1) return res.status(404).json({
                 msg: 'No categories available'
