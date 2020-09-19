@@ -3,6 +3,7 @@ import {validateFood} from '../../../middlewares/validate';
 import {uploadImage, uploadImages} from '../../../middlewares/upload';
 import db from '../../../database/models/index';
 import folders from "../../../helpers/folders";
+import { regExp } from '../../../middlewares/search';
 
 const {Op} = db.Sequelize;
 
@@ -164,7 +165,9 @@ class FoodController {
         try {
             const foods = await Food.findAll({
                 where: {
-                    [Op.iLike]: `%${name}`
+                    name: {
+                        [Op.iRegexp]: `${regExp(name)}`
+                    }
                 }
             });
 
@@ -176,7 +179,7 @@ class FoodController {
                 foods
             });
         } catch (e) {
-            console.error(e.message);
+            console.error(e);
             res.status(500).send('Internal server error...');
         }
     };
