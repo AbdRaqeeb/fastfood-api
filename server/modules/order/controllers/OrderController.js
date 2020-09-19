@@ -27,7 +27,7 @@ class OrderController {
             const result = await db.sequelize.transaction(async t => {
                 const order = await Order.create({
                     name: req.user.name,
-                    reference: generateReference(6),
+                    reference: await generateReference(6),
                     amount: data.amount,
                     payment: data.payment,
                     address: data.address,
