@@ -52,7 +52,7 @@ class OrderController {
                 result
             })
         } catch (e) {
-            console.error(e.message);
+            console.error(e);
             res.status(500).send('Internal server error...');
         }
     }
