@@ -32,7 +32,7 @@ class OrderController {
                     payment: data.payment,
                     address: data.address,
                     delivery: data.delivery,
-                    owner: req.user.id,
+                    user_id: req.user.id,
                     phone: data.phone,
                     comments: data.comments
                 }, {transaction: t});
