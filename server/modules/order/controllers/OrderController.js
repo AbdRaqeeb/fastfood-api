@@ -23,16 +23,18 @@ class OrderController {
         const data = req.body;
         const orderDetails = data.data;
 
+        const ref = await generateReference(6);
+        console.log(ref);
         try {
             const result = await db.sequelize.transaction(async t => {
                 const order = await Order.create({
                     name: req.user.name,
-                    reference: generateReference(6),
+                    reference: ref,
                     amount: data.amount,
                     payment: data.payment,
                     address: data.address,
                     delivery: data.delivery,
-                    owner: req.user.id,
+                    user_id: req.user.id,
                     phone: data.phone,
                     comments: data.comments
                 }, {transaction: t});

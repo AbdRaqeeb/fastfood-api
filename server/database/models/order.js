@@ -89,6 +89,11 @@ module.exports = (sequelize, DataTypes) => {
         cook_id: {
             type: DataTypes.INTEGER,
             allowNull: true
+        },
+        payment: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: 'transfer'
         }
     }, {
         sequelize,
