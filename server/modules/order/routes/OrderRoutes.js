@@ -8,7 +8,7 @@ const router = Router();
 const {createOrder, getCustomerOrders, getOrders, getOrder, updateOrder, rateOrder, deleteOrder} = OrderController;
 
 router.post('/', verify, createOrder);
-router.get('/user/:id', verify, getCustomerOrders);
+router.get('/user', verify, getCustomerOrders);
 router.get('/:id', [verify, authorize([Roles.Admin, Roles.Cook])], getOrder);
 router.get('/', [verify, authorize([Roles.Admin, Roles.Cook])], getOrders);
 router.put('/user/:id', verify, rateOrder);
