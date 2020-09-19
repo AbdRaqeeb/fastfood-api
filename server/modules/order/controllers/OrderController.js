@@ -71,12 +71,10 @@ class OrderController {
             const orders = await Order.findAll({
                 include: [
                     {
-                        model: User,
-                        required: true
+                        model: User
                     },
                     {
-                        model: Cook,
-                        required: true
+                        model: Cook
                     }
                 ]
             });
@@ -112,9 +110,11 @@ class OrderController {
                 msg: 'Order not found'
             });
 
-            const orderDetails = await OrderDetail.find({
-                order: order._id
-            }).populate('Food', '-_id');
+            const orderDetails = await OrderDetail.findAll({
+                where: {
+                    order_id: order.order_id
+                }
+            });
 
             return res.status(200).json({
                 order,
