@@ -3,7 +3,6 @@ import {validateFood} from '../../../middlewares/validate';
 import {uploadImages, uploadImage} from '../../../middlewares/upload';
 import db from '../../../database/models/index';
 import folders from "../../../helpers/folders";
-import { regExp } from '../../../middlewares/search';
 const {Op} = db.Sequelize;
 
 /**
@@ -166,7 +165,7 @@ class FoodController {
             const foods = await Food.findAll({
                 where: {
                     name: {
-                        [Op.iRegexp]: `${regExp(name)}`
+                        [Op.iLike]: `%${name}`
                     }
                 }
             });
