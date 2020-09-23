@@ -3,7 +3,9 @@ import {validateFood} from '../../../middlewares/validate';
 import {uploadImage, uploadImages} from '../../../middlewares/upload';
 import db from '../../../database/models/index';
 import folders from "../../../helpers/folders";
-import { regExp } from '../../../middlewares/search';
+import {regExp} from '../../../middlewares/search';
+import {addToCache, checkCache} from '../../../middlewares/cache';
+import cacheID from "../../../helpers/cacheID";
 
 const {Op} = db.Sequelize;
 
@@ -44,7 +46,7 @@ class FoodController {
             });
 
             // array key is added to uploadImage in order to return single url as an array
-            const images = (Object.keys(req.files).length === 1) ? await uploadImage(req.files.images, folders.foods, 'array'): await uploadImages(req.files.images);
+            const images = (Object.keys(req.files).length === 1) ? await uploadImage(req.files.images, folders.foods, 'array') : await uploadImages(req.files.images);
 
             food = Food.build({
                 name,
@@ -72,11 +74,18 @@ class FoodController {
      * @desc   Get all foods
      * @param {object} req express request object
      * @param {object} res express response object
+     * @param next
      * @returns {object} food object
      * @access Public
      */
-    static async getFoods(req, res) {
+    static async getFoods(req, res, next) {
         try {
+            const result = await checkCache(req, res, cacheID.getFoods, next);
+            console.log('RESULT', result);
+
+            if (result === true) {
+                return;
+            }
             const foods = await Food.findAll({
                 include: Category
             });
@@ -84,6 +93,8 @@ class FoodController {
             if (foods.length < 1) return res.status(404).json({
                 msg: 'No food available'
             });
+
+            await addToCache(cacheID.getFoods, foods);
 
             return res.status(200).json({
                 foods

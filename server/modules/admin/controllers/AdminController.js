@@ -5,6 +5,8 @@ import {generateToken} from '../../../middlewares/token';
 import {Admin, User, Order, Cook} from '../../../database/models';
 import {uploadImage} from "../../../middlewares/upload";
 import folders from "../../../helpers/folders";
+import { addToCache } from '../../../middlewares/cache';
+import cacheID from "../../../helpers/cacheID";
 
 /**
  * @class AdminController
@@ -183,6 +185,8 @@ class AdminController {
             if (users.length < 1) return res.status(404).json({
                 msg: 'No users found'
             });
+
+            await addToCache({id: cacheID.getCustomers}, {data: users});
 
             return res.status(200).json({
                 users

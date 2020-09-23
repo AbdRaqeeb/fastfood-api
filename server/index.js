@@ -2,6 +2,7 @@ import express from 'express';
 import 'dotenv/config';
 import cors from 'cors';
 import fileUpload from 'express-fileupload';
+import redis from 'redis';
 
 //config files
 import Cloudinary from "./config/cloudinary";
