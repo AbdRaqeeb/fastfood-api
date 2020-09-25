@@ -4,8 +4,7 @@ import {uploadImage, uploadImages} from '../../../middlewares/upload';
 import db from '../../../database/models/index';
 import folders from "../../../helpers/folders";
 import {regExp} from '../../../middlewares/search';
-import {addToCache, checkCache} from '../../../middlewares/cache';
-import cacheID from "../../../helpers/cacheID";
+import {addToCache} from '../../../middlewares/cache';
 
 const {Op} = db.Sequelize;
 
@@ -80,12 +79,6 @@ class FoodController {
      */
     static async getFoods(req, res, next) {
         try {
-            const result = await checkCache(req, res, cacheID.getFoods, next);
-            console.log('RESULT', result);
-
-            if (result === true) {
-                return;
-            }
             const foods = await Food.findAll({
                 include: Category
             });
@@ -94,7 +87,7 @@ class FoodController {
                 msg: 'No food available'
             });
 
-            await addToCache(cacheID.getFoods, foods);
+            await addToCache(req.originalUrl, foods);
 
             return res.status(200).json({
                 foods
@@ -127,6 +120,8 @@ class FoodController {
                 msg: 'Food not available in this category'
             });
 
+            await addToCache(req.originalUrl, foods);
+
             return res.status(200).json({
                 foods
             });
@@ -153,6 +148,8 @@ class FoodController {
             if (!food) return res.status(404).json({
                 msg: 'Food not found'
             });
+
+            await addToCache(req.originalUrl, food);
 
             return res.status(200).json({
                 food
@@ -185,6 +182,8 @@ class FoodController {
             if (foods.length < 1) return res.status(404).json({
                 msg: 'No query match'
             });
+
+            await addToCache(req.originalUrl, foods);
 
             return res.status(200).json({
                 foods

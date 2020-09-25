@@ -1,5 +1,4 @@
 import redis from 'redis';
-import {parse} from "dotenv";
 
 // Redis port
 const redis_port = process.env.REDIS_PORT || 6565;
@@ -13,20 +12,21 @@ export async function addToCache(id, data) {
     console.log('data added to cache');
 }
 
-export async function checkCache(req, res, id, next) {
+export async function checkCache(req, res, next) {
+    const id = req.originalUrl;
     await redis_client.get(id, (err, data) => {
         if (err) {
-            throw err;
+            console.error(err);
+            res.status(500).send('Internal server error')
         }
 
         if (data == null) {
             next();
         } else {
             console.log('DATA retrieved from cache');
-            res.send(JSON.parse(data));
+            res.status(200).json(JSON.parse(data));
         }
     });
-    return JSON.parse(data);
 }
 
 
