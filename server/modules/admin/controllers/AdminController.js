@@ -6,7 +6,6 @@ import {Admin, User, Order, Cook} from '../../../database/models';
 import {uploadImage} from "../../../middlewares/upload";
 import folders from "../../../helpers/folders";
 import { addToCache } from '../../../middlewares/cache';
-import cacheID from "../../../helpers/cacheID";
 
 /**
  * @class AdminController
@@ -186,7 +185,7 @@ class AdminController {
                 msg: 'No users found'
             });
 
-            await addToCache({id: cacheID.getCustomers}, {data: users});
+            await addToCache(req.originalUrl, users);
 
             return res.status(200).json({
                 users
@@ -215,6 +214,7 @@ class AdminController {
                 msg: 'No cooks found'
             });
 
+            await addToCache(req.originalUrl, cooks);
             return res.status(200).json({
                 cooks
             });
