@@ -3,6 +3,7 @@ import {validateFood} from '../../../middlewares/validate';
 import {uploadImages, uploadImage} from '../../../middlewares/upload';
 import db from '../../../database/models/index';
 import folders from "../../../helpers/folders";
+import {addToCache} from "../../../middlewares/cache";
 const {Op} = db.Sequelize;
 
 /**
@@ -84,6 +85,8 @@ class FoodController {
                 msg: 'No food available'
             });
 
+            await addToCache(req.originalUrl, foods);
+
             return res.status(200).json({
                 foods
             });
@@ -115,6 +118,8 @@ class FoodController {
                 msg: 'Food not available in this category'
             });
 
+            await addToCache(req.originalUrl, foods);
+
             return res.status(200).json({
                 foods
             });
@@ -141,6 +146,8 @@ class FoodController {
             if (!food) return res.status(404).json({
                 msg: 'Food not found'
             });
+
+            await addToCache(req.originalUrl, food);
 
             return res.status(200).json({
                 food
@@ -173,6 +180,8 @@ class FoodController {
             if (foods.length < 1) return res.status(404).json({
                 msg: 'No query match'
             });
+
+            await addToCache(req.originalUrl, foods);
 
             return res.status(200).json({
                 foods

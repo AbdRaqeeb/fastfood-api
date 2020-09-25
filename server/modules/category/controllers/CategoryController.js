@@ -2,6 +2,7 @@ import {Category, Food} from '../../../database/models';
 import {validateCategory} from '../../../middlewares/validate';
 import {uploadImage} from '../../../middlewares/upload';
 import folders from "../../../helpers/folders";
+import {addToCache} from "../../../middlewares/cache";
 
 /**
  * @class CategoryController
@@ -74,6 +75,7 @@ class CategoryController {
                 msg: 'No categories available'
             });
 
+            await addToCache(req.originalUrl, categories);
             return res.status(200).json({
                 categories
             });
@@ -101,6 +103,7 @@ class CategoryController {
                 msg: 'Category not found'
             });
 
+            await addToCache(req.originalUrl, category);
             return res.status(200).json({
                 category
             });

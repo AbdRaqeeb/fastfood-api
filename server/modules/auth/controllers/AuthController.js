@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs';
-import {uploadImage} from '../../../middlewares/upload';
-import {validateLogin, validateUser} from '../../../middlewares/validate';
+import {validateLogin} from '../../../middlewares/validate';
 import {generateToken} from '../../../middlewares/token';
 import {User, Cook, Admin, Order} from '../../../database/models';
+import {addToCache} from "../../../middlewares/cache";
 
 /**
  * @class AuthController
@@ -23,6 +23,7 @@ class AuthController {
                 include: Order
             });
 
+            await addToCache(req.originalUrl, user);
             res.status(200).json(user);
         } catch (e) {
             console.error(e.message);
@@ -44,6 +45,7 @@ class AuthController {
                 include: Order
             });
 
+            await addToCache(req.originalUrl, cook);
             res.status(200).json(cook);
         } catch (e) {
             console.error(e.message);
@@ -65,6 +67,8 @@ class AuthController {
             const admin = await Admin.findByPk(req.user.id);
 
             res.status(200).json(admin);
+
+            await addToCache(req.originalUrl, admin);
         } catch (e) {
             console.error(e.message);
             res.status(500).send('Internal server error')
